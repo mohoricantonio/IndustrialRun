@@ -190,7 +190,7 @@ public class Movment : MonoBehaviour
 
         if (!isGrounded)
         {
-            rb.velocity = rb.velocity + Vector3.up * Physics.gravity.y * FallMultiplier * Time.deltaTime;
+            rb.linearVelocity = rb.linearVelocity + Vector3.up * Physics.gravity.y * FallMultiplier * Time.deltaTime;
         }
     }
     private void JumpRigidBody()

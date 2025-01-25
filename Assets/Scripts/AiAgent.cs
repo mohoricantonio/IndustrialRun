@@ -32,10 +32,9 @@ public class AIAgent : Agent
 
     //AI parameters
     public Transform TargetTransform;
+    public Transform Box;
     private Vector3 originalPosition;
-    private float timeSinceLastPunishment = 0f;
     private bool isCrouching = false;
-    private int action = 0;
     private float distanceToGoal;
     #endregion
 
@@ -43,12 +42,14 @@ public class AIAgent : Agent
     public override void OnActionReceived(ActionBuffers actions)
     {
         int move = actions.DiscreteActions[0];
-        int action = actions.DiscreteActions[1];
         Debug.Log("move " + move);
-        Debug.Log("action " + action);
 
         switch (move)
         {
+            //don't move
+            case 0:
+                animator.SetBool("isMoving", false);
+                break;
             //move right
             case 1:
                 animator.SetBool("isMoving", true);
@@ -59,66 +60,37 @@ public class AIAgent : Agent
                 animator.SetBool("isMoving", true);
                 movementDirection = new Vector3(-1f, 0f, 0f);
                 break;
-            //don't move
-            default:
-                animator.SetBool("isMoving", false);
-                break;
-        }
-        switch (action)
-        {
-            case 1:
-                Jump();
-                break;
-            case 2:
-                Crouch();
-                break;
-            case 3:
-                GetUp();
-                break;
-            case 4:
-                Trick();
-                break;
-            case 0:
-                break;
-            default:
-                break;
-        }
-        timeSinceLastPunishment += Time.deltaTime;
-
-        // Check if 1 second has passed since the last reward was added
-        if (timeSinceLastPunishment >= Time.timeScale)
-        {
-            AddReward(-1f); // Penalize the agent for taking too long
-            timeSinceLastPunishment = 0f; // Reset the timer after adding the penalty
+            
         }
 
-        if(distanceToGoal > Mathf.Abs(TargetTransform.position.x - transform.position.x))
-        {
-            AddReward(5f);
-        }
-        else
-        {
-            AddReward(-3f);
-        }
-        distanceToGoal = TargetTransform.position.x - transform.position.x;
+        // Penalty given each step to encourage agent to finish task quickly.
+        AddReward(-1f / MaxStep);
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.position.x);
-        sensor.AddObservation(TargetTransform.position.x);
-        sensor.AddObservation(canDoATrick);
-        sensor.AddObservation(readyToDoubleJump);
+        sensor.AddObservation(transform.localPosition.x - TargetTransform.localPosition.x);
+        //sensor.AddObservation(TargetTransform.localPosition.x);
     }
 
     public override void OnEpisodeBegin()
     {
-        Time.timeScale = 4f;
-        timeSinceLastPunishment = 0f;
-        transform.position = originalPosition;
+        System.Random random = new System.Random();
+        int randomValue = random.Next(0, 2);
+        if (randomValue == 0)
+        {
+            TargetTransform.localPosition = new Vector3(-80, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            Box.localPosition = new Vector3(80, Box.localPosition.y, Box.localPosition.z);
+        }
+        else
+        {
+            TargetTransform.localPosition = new Vector3(-40, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            Box.localPosition = new Vector3(45, Box.localPosition.y, Box.localPosition.z);
+        }
+        
+        Time.timeScale = 8f;
+        transform.localPosition = originalPosition;
         isCrouching = false;
-        action = 0;
-        distanceToGoal = Mathf.Abs(TargetTransform.position.x - originalPosition.x);
         SetAnimParameters();
     }
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -137,37 +109,23 @@ public class AIAgent : Agent
                 actions[0] = 2;
                 break;
         }
-        actions[1] = this.action;
 
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("LevelStart"))
         {
-            AddReward(50f);
+            AddReward(5f);
             EndEpisode();
         }
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            Vector3 collisionDirection = collision.contacts[0].point - transform.position;
-
-            // Normalize the direction vector
-            collisionDirection = collisionDirection.normalized;
-
-            // Check if the collision is from the sides (left or right)
-            if (Mathf.Abs(collisionDirection.y) > Mathf.Abs(collisionDirection.x))
-            {
-                AddReward(-3f);
-                EndEpisode();
-            }
+            AddReward(-10f);
+            EndEpisode();
         }
     }
     private void Jump()
     {
-        this.action = 0;
         animator.ResetTrigger("Jump");
         if (isGrounded && animator.GetBool("doingTrick") == false)
         {
@@ -186,8 +144,6 @@ public class AIAgent : Agent
     }
     private void Crouch()
     {
-        this.action = 0;
-
         if (CanCrouch() && !isCrouching)
         {
             animator.SetBool("isCrouching", true);
@@ -199,7 +155,6 @@ public class AIAgent : Agent
     }
     private void GetUp()
     {
-        this.action = 0;
         if (isCrouching)
         {
             animator.SetBool("isCrouching", false);
@@ -211,7 +166,6 @@ public class AIAgent : Agent
     }
     private void Trick()
     {
-        this.action = 0;
         if (canDoATrick)
         {
             animator.SetBool("doingTrick", true);
@@ -226,14 +180,13 @@ public class AIAgent : Agent
         readyToDoubleJump = true;
         isGrounded = true;
         animator = GetComponent<Animator>();
-        animator.SetBool("isMoving", false);
         originalMovementSpeed = MovementSpeed;
         rotationDirection = Quaternion.LookRotation(new Vector3(1f, 0f, 0f), Vector3.up);
         originalZValue = transform.position.z;
         boxColider = GetComponent<BoxCollider>();
         isCrouching = false;
 
-        originalPosition = transform.position;
+        originalPosition = transform.localPosition;
         originalColiderSize = boxColider.size;
         originalColiderCenter = boxColider.center;
         distanceToGoal = TargetTransform.position.x - originalPosition.x;
@@ -244,21 +197,6 @@ public class AIAgent : Agent
         CheckGroundStatus();
         canDoATrick = CanDoATrick();
         MoveRigidBody();
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            action = 1;
-        }
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            if (!isCrouching)
-                action = 2;
-            else
-                action = 3;
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            action = 4;
-        }
     }
 
     private void CheckGroundStatus()
@@ -313,7 +251,7 @@ public class AIAgent : Agent
 
         if (!isGrounded)
         {
-            rb.velocity = rb.velocity + Vector3.up * Physics.gravity.y * FallMultiplier * Time.deltaTime;
+            rb.linearVelocity = rb.linearVelocity + Vector3.up * Physics.gravity.y * FallMultiplier * Time.deltaTime;
         }
     }
 
@@ -340,7 +278,6 @@ public class AIAgent : Agent
     public void FinishedTrick()
     {
         animator.SetBool("doingTrick", false);
-        //AddReward(10f);
     }
 
     public void JumpRigidBody()
