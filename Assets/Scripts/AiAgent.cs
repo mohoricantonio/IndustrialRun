@@ -2,13 +2,14 @@ using System;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AIAgent : Agent
 {
 
     #region Properties
-    public float MovementSpeed = 8f, JumpForce = 10f, RotationSpeed = 800f, FallMultiplier = 3f, GroundCheckDistance = 0.5f, DoubleJumpCooldown = 2.5f, TrickDistance = 7.5f, MinYPos = 1.933181f;
+    public float MovementSpeed = 8f, JumpForce = 10f, RotationSpeed = 800f, FallMultiplier = 3f, GroundCheckDistance = 0.5f, DoubleJumpCooldown = 2.5f, TrickDistance = 7.5f, MinYPos = -143.8166f;
     public LayerMask GroundLayer;
     public LayerMask TrickObsticleLayer;
 
@@ -32,8 +33,13 @@ public class AIAgent : Agent
 
     //AI parameters
     public Transform TargetTransform;
-    public Transform Box;
-    private Vector3 originalPosition;
+    public Transform EndEpizodeCollider;
+    public Transform BoxesToJumpOver;
+    public Transform DuckUnder;
+
+    private float boxesToJumpOverRotationY;
+    private int actionToPerform;
+
     private bool isCrouching = false;
     private float distanceToGoal;
     #endregion
@@ -42,7 +48,7 @@ public class AIAgent : Agent
     public override void OnActionReceived(ActionBuffers actions)
     {
         int move = actions.DiscreteActions[0];
-        Debug.Log("move " + move);
+        //int action = actions.DiscreteActions[1];
 
         switch (move)
         {
@@ -60,8 +66,47 @@ public class AIAgent : Agent
                 animator.SetBool("isMoving", true);
                 movementDirection = new Vector3(-1f, 0f, 0f);
                 break;
-            
         }
+
+        //switch (action)
+        //{
+        //    //don't do anything
+        //    case 0:
+        //        Debug.Log("Do nothing");
+        //        break;
+        //    //jump
+        //    case 1:
+        //        Debug.Log("Jump");
+        //        Jump();
+        //        break;
+        //    //crouch
+        //    case 2:
+        //        Debug.Log("Crouch");
+        //        Crouch();
+        //        break;
+        //    //get up
+        //    case 3:
+        //        Debug.Log("Get up");
+        //        GetUp();
+        //        break;
+        //    //trick
+        //    case 4:
+        //        Debug.Log("Trick");
+        //        //Trick();
+        //        break;
+        //}
+
+        // Add reward if closer to the goal, else penalize
+        if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < distanceToGoal)
+        {
+            AddReward(1f / MaxStep);
+        }
+        else
+        {
+            AddReward(-1f / MaxStep);
+        }
+
+        distanceToGoal = MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x);
 
         // Penalty given each step to encourage agent to finish task quickly.
         AddReward(-1f / MaxStep);
@@ -70,7 +115,9 @@ public class AIAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(transform.localPosition.x - TargetTransform.localPosition.x);
-        //sensor.AddObservation(TargetTransform.localPosition.x);
+        sensor.AddObservation(readyToDoubleJump);
+        sensor.AddObservation(distanceToGoal);
+        sensor.AddObservation(isCrouching);
     }
 
     public override void OnEpisodeBegin()
@@ -79,18 +126,28 @@ public class AIAgent : Agent
         int randomValue = random.Next(0, 2);
         if (randomValue == 0)
         {
-            TargetTransform.localPosition = new Vector3(-80, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
-            Box.localPosition = new Vector3(80, Box.localPosition.y, Box.localPosition.z);
+            transform.localPosition = new Vector3(-35, transform.localPosition.y, transform.localPosition.z);
+            TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            EndEpizodeCollider.localPosition = new Vector3(-20, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
+            //BoxesToJumpOver.localPosition = new Vector3(-90, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
+            //BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY + 180, 0);
+            //DuckUnder.localPosition = new Vector3(-5, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
         }
         else
         {
-            TargetTransform.localPosition = new Vector3(-40, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
-            Box.localPosition = new Vector3(45, Box.localPosition.y, Box.localPosition.z);
+            transform.localPosition = new Vector3(-75, transform.localPosition.y, transform.localPosition.z);
+            TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            EndEpizodeCollider.localPosition = new Vector3(-100, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
+            //BoxesToJumpOver.localPosition = new Vector3(-10, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
+            //BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY, 0);
+            //DuckUnder.localPosition = new Vector3(-20, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
         }
-        
+
+        //Time.timeScale = 2.75f;
         Time.timeScale = 8f;
-        transform.localPosition = originalPosition;
         isCrouching = false;
+
+        distanceToGoal = Mathf.Abs(TargetTransform.localPosition.x - transform.localPosition.x);
         SetAnimParameters();
     }
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -109,7 +166,7 @@ public class AIAgent : Agent
                 actions[0] = 2;
                 break;
         }
-
+        actions[1] = actionToPerform;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -118,7 +175,7 @@ public class AIAgent : Agent
             AddReward(5f);
             EndEpisode();
         }
-        if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Water"))
         {
             AddReward(-10f);
             EndEpisode();
@@ -126,6 +183,7 @@ public class AIAgent : Agent
     }
     private void Jump()
     {
+        actionToPerform = 0;
         animator.ResetTrigger("Jump");
         if (isGrounded && animator.GetBool("doingTrick") == false)
         {
@@ -182,14 +240,14 @@ public class AIAgent : Agent
         animator = GetComponent<Animator>();
         originalMovementSpeed = MovementSpeed;
         rotationDirection = Quaternion.LookRotation(new Vector3(1f, 0f, 0f), Vector3.up);
-        originalZValue = transform.position.z;
+        originalZValue = transform.localPosition.z;
         boxColider = GetComponent<BoxCollider>();
         isCrouching = false;
 
-        originalPosition = transform.localPosition;
+        boxesToJumpOverRotationY = BoxesToJumpOver.rotation.y;
+
         originalColiderSize = boxColider.size;
         originalColiderCenter = boxColider.center;
-        distanceToGoal = TargetTransform.position.x - originalPosition.x;
         SetAnimParameters();
     }
     private void Update()
@@ -197,6 +255,22 @@ public class AIAgent : Agent
         CheckGroundStatus();
         canDoATrick = CanDoATrick();
         MoveRigidBody();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            actionToPerform = 1;
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if (!isCrouching)
+                actionToPerform = 2;
+            else
+                actionToPerform = 3;
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            actionToPerform = 4;
+        }
     }
 
     private void CheckGroundStatus()
@@ -242,12 +316,12 @@ public class AIAgent : Agent
 
         }
         transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationDirection, RotationSpeed * Time.deltaTime);
-        float ypos = transform.position.y;
+        float ypos = transform.localPosition.y;
         if (ypos <= MinYPos)
         {
             ypos = MinYPos + 0.001f;
         }
-        transform.position = new Vector3(transform.position.x, ypos, originalZValue);
+        transform.localPosition = new Vector3(transform.localPosition.x, ypos, originalZValue);
 
         if (!isGrounded)
         {
