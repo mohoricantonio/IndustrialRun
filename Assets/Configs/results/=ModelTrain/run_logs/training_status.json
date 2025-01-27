@@ -1,0 +1,47 @@
+{
+    "AiAgents": {
+        "checkpoints": [
+            {
+                "steps": 499913,
+                "file_path": "results\\=ModelTrain\\AiAgents\\AiAgents-499913.onnx",
+                "reward": 3.428639989346266,
+                "creation_time": 1738002961.0990176,
+                "auxillary_file_paths": [
+                    "results\\=ModelTrain\\AiAgents\\AiAgents-499913.pt"
+                ]
+            },
+            {
+                "steps": 500101,
+                "file_path": "results\\=ModelTrain\\AiAgents\\AiAgents-500101.onnx",
+                "reward": 3.66739996150136,
+                "creation_time": 1738002961.2131252,
+                "auxillary_file_paths": [
+                    "results\\=ModelTrain\\AiAgents\\AiAgents-500101.pt"
+                ]
+            },
+            {
+                "steps": 750083,
+                "file_path": "results\\=ModelTrain\\AiAgents\\AiAgents-750083.onnx",
+                "reward": 4.853866556659341,
+                "creation_time": 1738003233.4970818,
+                "auxillary_file_paths": [
+                    "results\\=ModelTrain\\AiAgents\\AiAgents-750083.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 750083,
+            "file_path": "results\\=ModelTrain\\AiAgents.onnx",
+            "reward": 4.853866556659341,
+            "creation_time": 1738003233.4970818,
+            "auxillary_file_paths": [
+                "results\\=ModelTrain\\AiAgents\\AiAgents-750083.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

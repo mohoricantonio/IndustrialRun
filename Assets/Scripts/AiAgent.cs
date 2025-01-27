@@ -48,7 +48,7 @@ public class AIAgent : Agent
     public override void OnActionReceived(ActionBuffers actions)
     {
         int move = actions.DiscreteActions[0];
-        //int action = actions.DiscreteActions[1];
+        int action = actions.DiscreteActions[1];
 
         switch (move)
         {
@@ -68,33 +68,33 @@ public class AIAgent : Agent
                 break;
         }
 
-        //switch (action)
-        //{
-        //    //don't do anything
-        //    case 0:
-        //        Debug.Log("Do nothing");
-        //        break;
-        //    //jump
-        //    case 1:
-        //        Debug.Log("Jump");
-        //        Jump();
-        //        break;
-        //    //crouch
-        //    case 2:
-        //        Debug.Log("Crouch");
-        //        Crouch();
-        //        break;
-        //    //get up
-        //    case 3:
-        //        Debug.Log("Get up");
-        //        GetUp();
-        //        break;
-        //    //trick
-        //    case 4:
-        //        Debug.Log("Trick");
-        //        //Trick();
-        //        break;
-        //}
+        switch (action)
+        {
+            //don't do anything
+            case 0:
+                //Debug.Log("Do nothing");
+                break;
+            //jump
+            case 1:
+                //Debug.Log("Jump");
+                //Jump();
+                break;
+            //crouch
+            case 2:
+                //Debug.Log("Crouch");
+                //Crouch();
+                break;
+            //get up
+            case 3:
+                //Debug.Log("Get up");
+                //GetUp();
+                break;
+            //trick
+            //case 4:
+            //    Debug.Log("Trick");
+            //    //Trick();
+            //    break;
+        }
 
         // Add reward if closer to the goal, else penalize
         if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < distanceToGoal)
@@ -109,6 +109,7 @@ public class AIAgent : Agent
         distanceToGoal = MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x);
 
         // Penalty given each step to encourage agent to finish task quickly.
+        
         AddReward(-1f / MaxStep);
     }
 
@@ -129,22 +130,21 @@ public class AIAgent : Agent
             transform.localPosition = new Vector3(-35, transform.localPosition.y, transform.localPosition.z);
             TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
             EndEpizodeCollider.localPosition = new Vector3(-20, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
-            //BoxesToJumpOver.localPosition = new Vector3(-90, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
-            //BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY + 180, 0);
-            //DuckUnder.localPosition = new Vector3(-5, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
+            BoxesToJumpOver.localPosition = new Vector3(-90, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
+            BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY + 180, 0);
+            DuckUnder.localPosition = new Vector3(-5, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
         }
         else
         {
             transform.localPosition = new Vector3(-75, transform.localPosition.y, transform.localPosition.z);
             TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
             EndEpizodeCollider.localPosition = new Vector3(-100, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
-            //BoxesToJumpOver.localPosition = new Vector3(-10, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
-            //BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY, 0);
-            //DuckUnder.localPosition = new Vector3(-20, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
+            BoxesToJumpOver.localPosition = new Vector3(-10, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
+            BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY, 0);
+            DuckUnder.localPosition = new Vector3(-20, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
         }
 
-        //Time.timeScale = 2.75f;
-        Time.timeScale = 8f;
+        //Time.timeScale = 4f;
         isCrouching = false;
 
         distanceToGoal = Mathf.Abs(TargetTransform.localPosition.x - transform.localPosition.x);
@@ -170,15 +170,33 @@ public class AIAgent : Agent
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("LevelStart"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("LevelEnd"))
         {
             AddReward(5f);
             EndEpisode();
         }
-        if (other.gameObject.layer == LayerMask.NameToLayer("Water"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("EndBox"))
         {
             AddReward(-10f);
             EndEpisode();
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                Vector3 contactNormal = contact.normal;
+                if (Mathf.Abs(contactNormal.y) < Mathf.Abs(contactNormal.x))
+                {
+                    Debug.Log("Collision");
+                    // Collision from left or right
+                    AddReward(-2f);
+                    EndEpisode();
+                    break;
+                }
+            }
         }
     }
     private void Jump()
@@ -202,6 +220,7 @@ public class AIAgent : Agent
     }
     private void Crouch()
     {
+        actionToPerform = 0;
         if (CanCrouch() && !isCrouching)
         {
             animator.SetBool("isCrouching", true);
@@ -213,6 +232,7 @@ public class AIAgent : Agent
     }
     private void GetUp()
     {
+        actionToPerform = 0;
         if (isCrouching)
         {
             animator.SetBool("isCrouching", false);
@@ -267,10 +287,10 @@ public class AIAgent : Agent
             else
                 actionToPerform = 3;
         }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            actionToPerform = 4;
-        }
+        //if (Input.GetKeyDown(KeyCode.E))
+        //{
+        //    actionToPerform = 4;
+        //}
     }
 
     private void CheckGroundStatus()
