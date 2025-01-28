@@ -75,7 +75,7 @@ public class AIAgent : Agent
                 break;
             //jump
             case 1:
-                //Jump();
+                Jump();
                 break;
             //crouch
             case 2:
@@ -91,18 +91,12 @@ public class AIAgent : Agent
                 //    break;
         }
 
-        // Add reward if closer to the goal, else penalize
+        // Add reward if closer to the goal
         if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < distanceToGoal)
         {
-            AddReward(1f / MaxStep);
+            AddReward(2f / MaxStep);
+            distanceToGoal = MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x);
         }
-        else
-        {
-            AddReward(-1f / MaxStep);
-        }
-
-        distanceToGoal = MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x);
-
         // Penalty given each step to encourage agent to finish task quickly.
 
         AddReward(-1f / MaxStep);
@@ -139,7 +133,6 @@ public class AIAgent : Agent
             DuckUnder.localPosition = new Vector3(-20, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
         }
 
-        //Time.timeScale = 4f;
         GetUp();
         isCrouching = false;
 
@@ -166,12 +159,12 @@ public class AIAgent : Agent
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("LevelEnd"))
+        if (other.gameObject.tag == "Finish")
         {
             AddReward(5f);
             EndEpisode();
         }
-        if (other.gameObject.layer == LayerMask.NameToLayer("EndBox"))
+        if (other.gameObject.tag == "EndEpisode")
         {
             AddReward(-10f);
             EndEpisode();
@@ -179,7 +172,7 @@ public class AIAgent : Agent
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (collision.gameObject.tag == "Obstacle")
         {
             foreach (ContactPoint contact in collision.contacts)
             {
@@ -188,7 +181,8 @@ public class AIAgent : Agent
                 {
                     Debug.Log("Collision");
                     // Collision from left or right
-                    AddReward(-1f / MaxStep);
+                    AddReward(-2f / MaxStep);
+                    //EndEpisode();
                     break;
                 }
             }
