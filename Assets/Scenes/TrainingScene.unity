@@ -131,6 +131,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainContainer (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 153.81879
@@ -188,6 +192,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainContainer (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 153.81879
@@ -244,6 +252,10 @@ PrefabInstance:
     - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_Name
       value: TrainContainer (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -399,6 +411,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainContainer (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 153.81879
@@ -548,6 +564,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainContainer (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 153.81879
@@ -604,6 +624,10 @@ PrefabInstance:
     - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_Name
       value: TrainContainer (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -662,6 +686,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainContainer (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 153.81879
@@ -718,6 +746,10 @@ PrefabInstance:
     - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_Name
       value: TrainContainer (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -776,6 +808,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainContainer (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 153.81879
@@ -832,6 +868,10 @@ PrefabInstance:
     - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_Name
       value: TrainContainer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4724098714097620141, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_Model
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6599986018763356509, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_LocalPosition.x

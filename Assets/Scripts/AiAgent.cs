@@ -72,28 +72,23 @@ public class AIAgent : Agent
         {
             //don't do anything
             case 0:
-                //Debug.Log("Do nothing");
                 break;
             //jump
             case 1:
-                //Debug.Log("Jump");
                 //Jump();
                 break;
             //crouch
             case 2:
-                //Debug.Log("Crouch");
                 //Crouch();
                 break;
             //get up
             case 3:
-                //Debug.Log("Get up");
                 //GetUp();
                 break;
-            //trick
-            //case 4:
-            //    Debug.Log("Trick");
-            //    //Trick();
-            //    break;
+                //trick
+                //case 4:
+                //    //Trick();
+                //    break;
         }
 
         // Add reward if closer to the goal, else penalize
@@ -109,7 +104,7 @@ public class AIAgent : Agent
         distanceToGoal = MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x);
 
         // Penalty given each step to encourage agent to finish task quickly.
-        
+
         AddReward(-1f / MaxStep);
     }
 
@@ -145,6 +140,7 @@ public class AIAgent : Agent
         }
 
         //Time.timeScale = 4f;
+        GetUp();
         isCrouching = false;
 
         distanceToGoal = Mathf.Abs(TargetTransform.localPosition.x - transform.localPosition.x);
@@ -192,8 +188,7 @@ public class AIAgent : Agent
                 {
                     Debug.Log("Collision");
                     // Collision from left or right
-                    AddReward(-2f);
-                    EndEpisode();
+                    AddReward(-1f / MaxStep);
                     break;
                 }
             }
