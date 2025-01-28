@@ -79,11 +79,11 @@ public class AIAgent : Agent
                 break;
             //crouch
             case 2:
-                //Crouch();
+                Crouch();
                 break;
             //get up
             case 3:
-                //GetUp();
+                GetUp();
                 break;
                 //trick
                 //case 4:
