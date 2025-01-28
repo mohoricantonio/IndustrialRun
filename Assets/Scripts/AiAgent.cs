@@ -75,14 +75,17 @@ public class AIAgent : Agent
                 break;
             //jump
             case 1:
-                Jump();
+                //Debug.Log("Jump");
+                //Jump();
                 break;
             //crouch
             case 2:
+                Debug.Log("Crouch");
                 Crouch();
                 break;
             //get up
             case 3:
+                Debug.Log("Get up");
                 GetUp();
                 break;
                 //trick
@@ -94,7 +97,7 @@ public class AIAgent : Agent
         // Add reward if closer to the goal
         if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < distanceToGoal)
         {
-            AddReward(2f / MaxStep);
+            AddReward(5f / MaxStep);
             distanceToGoal = MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x);
         }
         // Penalty given each step to encourage agent to finish task quickly.
@@ -105,31 +108,61 @@ public class AIAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(transform.localPosition.x - TargetTransform.localPosition.x);
-        sensor.AddObservation(readyToDoubleJump);
         sensor.AddObservation(distanceToGoal);
         sensor.AddObservation(isCrouching);
+        //sensor.AddObservation(readyToDoubleJump);
     }
 
     public override void OnEpisodeBegin()
     {
         System.Random random = new System.Random();
         int randomValue = random.Next(0, 2);
+
+        System.Random random2 = new System.Random();
+        int randomValue2 = random2.Next(0, 2);
+
         if (randomValue == 0)
         {
+            
             transform.localPosition = new Vector3(-35, transform.localPosition.y, transform.localPosition.z);
-            TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+
+            //if (randomValue2 == 0)
+            //{
+                TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            //}
+            //else
+            //{
+            //    TargetTransform.localPosition = new Vector3(-40, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            //}
+
             EndEpizodeCollider.localPosition = new Vector3(-20, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
+
             BoxesToJumpOver.localPosition = new Vector3(-90, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
+
             BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY + 180, 0);
+
             DuckUnder.localPosition = new Vector3(-5, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
+
         }
         else
         {
             transform.localPosition = new Vector3(-75, transform.localPosition.y, transform.localPosition.z);
-            TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+
+            //if(randomValue2 == 0)
+            //{
+                TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            //}
+            //else
+            //{
+            //    TargetTransform.localPosition = new Vector3(-61, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            //}
+
             EndEpizodeCollider.localPosition = new Vector3(-100, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
+
             BoxesToJumpOver.localPosition = new Vector3(-10, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
+
             BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY, 0);
+
             DuckUnder.localPosition = new Vector3(-20, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
         }
 
@@ -181,7 +214,7 @@ public class AIAgent : Agent
                 {
                     Debug.Log("Collision");
                     // Collision from left or right
-                    AddReward(-2f / MaxStep);
+                    AddReward(-5f / MaxStep);
                     //EndEpisode();
                     break;
                 }
@@ -243,6 +276,7 @@ public class AIAgent : Agent
 
     private void Start()
     {
+        Time.timeScale = 5f;
         rb = GetComponent<Rigidbody>();
         readyToDoubleJump = true;
         isGrounded = true;
