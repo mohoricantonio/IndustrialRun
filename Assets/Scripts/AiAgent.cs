@@ -76,16 +76,16 @@ public class AIAgent : Agent
             //jump
             case 1:
                 //Debug.Log("Jump");
-                //Jump();
+                Jump();
                 break;
             //crouch
             case 2:
-                Debug.Log("Crouch");
+                //Debug.Log("Crouch");
                 Crouch();
                 break;
             //get up
             case 3:
-                Debug.Log("Get up");
+                //Debug.Log("Get up");
                 GetUp();
                 break;
                 //trick
@@ -110,7 +110,7 @@ public class AIAgent : Agent
         sensor.AddObservation(transform.localPosition.x - TargetTransform.localPosition.x);
         sensor.AddObservation(distanceToGoal);
         sensor.AddObservation(isCrouching);
-        //sensor.AddObservation(readyToDoubleJump);
+        sensor.AddObservation(readyToDoubleJump);
     }
 
     public override void OnEpisodeBegin()
@@ -123,12 +123,12 @@ public class AIAgent : Agent
 
         if (randomValue == 0)
         {
-            
+
             transform.localPosition = new Vector3(-35, transform.localPosition.y, transform.localPosition.z);
 
             //if (randomValue2 == 0)
             //{
-                TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
             //}
             //else
             //{
@@ -150,7 +150,7 @@ public class AIAgent : Agent
 
             //if(randomValue2 == 0)
             //{
-                TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
             //}
             //else
             //{
@@ -210,10 +210,11 @@ public class AIAgent : Agent
             foreach (ContactPoint contact in collision.contacts)
             {
                 Vector3 contactNormal = contact.normal;
+
+                // Collision from left or right
                 if (Mathf.Abs(contactNormal.y) < Mathf.Abs(contactNormal.x))
                 {
                     Debug.Log("Collision");
-                    // Collision from left or right
                     AddReward(-5f / MaxStep);
                     //EndEpisode();
                     break;
@@ -221,6 +222,26 @@ public class AIAgent : Agent
             }
         }
     }
+    //private void OnCollisionStay(Collision collision)
+    //{
+    //    if (collision.gameObject.tag == "Obstacle")
+    //    {
+    //        foreach (ContactPoint contact in collision.contacts)
+    //        {
+    //            Vector3 contactNormal = contact.normal;
+    //            // Collision from left or right
+    //            if (Mathf.Abs(contactNormal.y) < Mathf.Abs(contactNormal.x))
+    //            {
+    //                Debug.Log("Collision stay");
+    //                AddReward(-5f / MaxStep);
+    //                //EndEpisode();
+    //                break;
+    //            }
+    //        }
+    //    }
+    //}
+
+
     private void Jump()
     {
         actionToPerform = 0;

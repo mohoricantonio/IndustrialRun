@@ -45,6 +45,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -263,7 +264,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2667070066410200465}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 02f0c110058267e44ab4ba336ad2e665, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -344,7 +345,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 4c47582f-e55a-411c-9e69-de0e512a1763
-    m_ActionName: Movement/Jump[/Keyboard/space]
+    m_ActionName: 'Movement/Jump[/Keyboard/space]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8926521656389105046}
@@ -360,7 +361,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: cd77c83d-6719-49cd-928a-206662c974ae
-    m_ActionName: Movement/MoveInput[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
+    m_ActionName: 'Movement/MoveInput[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8926521656389105046}
@@ -376,7 +377,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 2aeb753c-de96-4355-8edd-bfbeb8dca545
-    m_ActionName: Movement/Crouch[/Keyboard/c]
+    m_ActionName: 'Movement/Crouch[/Keyboard/c]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8926521656389105046}
@@ -392,7 +393,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: 42409308-ff2c-4a7b-a021-4a29d19e9ee5
-    m_ActionName: Movement/Trick[/Keyboard/e]
+    m_ActionName: 'Movement/Trick[/Keyboard/e]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Movement
@@ -451,6 +452,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
