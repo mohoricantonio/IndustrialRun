@@ -118,22 +118,12 @@ public class AIAgent : Agent
         System.Random random = new System.Random();
         int randomValue = random.Next(0, 2);
 
-        System.Random random2 = new System.Random();
-        int randomValue2 = random2.Next(0, 2);
-
         if (randomValue == 0)
         {
 
-            transform.localPosition = new Vector3(-35, transform.localPosition.y, transform.localPosition.z);
+            transform.localPosition = new Vector3(-30, transform.localPosition.y, transform.localPosition.z);
 
-            //if (randomValue2 == 0)
-            //{
             TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
-            //}
-            //else
-            //{
-            //    TargetTransform.localPosition = new Vector3(-40, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
-            //}
 
             EndEpizodeCollider.localPosition = new Vector3(-20, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
 
@@ -146,16 +136,9 @@ public class AIAgent : Agent
         }
         else
         {
-            transform.localPosition = new Vector3(-75, transform.localPosition.y, transform.localPosition.z);
+            transform.localPosition = new Vector3(-85, transform.localPosition.y, transform.localPosition.z);
 
-            //if(randomValue2 == 0)
-            //{
             TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
-            //}
-            //else
-            //{
-            //    TargetTransform.localPosition = new Vector3(-61, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
-            //}
 
             EndEpizodeCollider.localPosition = new Vector3(-100, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
 
@@ -214,32 +197,28 @@ public class AIAgent : Agent
                 // Collision from left or right
                 if (Mathf.Abs(contactNormal.y) < Mathf.Abs(contactNormal.x))
                 {
-                    Debug.Log("Collision");
                     AddReward(-5f / MaxStep);
-                    //EndEpisode();
                     break;
                 }
             }
         }
     }
-    //private void OnCollisionStay(Collision collision)
-    //{
-    //    if (collision.gameObject.tag == "Obstacle")
-    //    {
-    //        foreach (ContactPoint contact in collision.contacts)
-    //        {
-    //            Vector3 contactNormal = contact.normal;
-    //            // Collision from left or right
-    //            if (Mathf.Abs(contactNormal.y) < Mathf.Abs(contactNormal.x))
-    //            {
-    //                Debug.Log("Collision stay");
-    //                AddReward(-5f / MaxStep);
-    //                //EndEpisode();
-    //                break;
-    //            }
-    //        }
-    //    }
-    //}
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.tag == "Obstacle")
+        {
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                Vector3 contactNormal = contact.normal;
+                // Collision from left or right
+                if (Mathf.Abs(contactNormal.y) < Mathf.Abs(contactNormal.x))
+                {
+                    AddReward(-0.5f / MaxStep);
+                    break;
+                }
+            }
+        }
+    }
 
 
     private void Jump()
