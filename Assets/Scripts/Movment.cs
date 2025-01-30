@@ -43,13 +43,13 @@ public class Movment : MonoBehaviour
     {
         if (context.performed)
         {
-            if (isGrounded && animator.GetBool("doingTrick") == false)
+            if (isGrounded && animator.GetBool("doingTrick") == false && animator.GetBool("isCrouching") == false && animator.GetBool("IsJumping") == false)
             {
                 animator.SetBool("IsJumping", true);
                 animator.SetBool("FinishedJump", false);
                 animator.SetTrigger("Jump");
             }
-            if (!isGrounded && readyToDoubleJump && animator.GetBool("doingTrick") == false)
+            if (!isGrounded && readyToDoubleJump && animator.GetBool("doingTrick") == false && animator.GetBool("isCrouching") == false)
             {
                 readyToDoubleJump = false;
                 animator.SetTrigger("Double jump");

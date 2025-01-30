@@ -384,7 +384,7 @@ public class AIAgent : Agent
         animator.SetInteger("Trick", 0);
     }
     private void ResetDoubleJumpCooldown()
-    {
+    { 
         readyToDoubleJump = true;
     }
 
