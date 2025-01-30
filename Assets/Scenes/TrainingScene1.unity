@@ -2344,6 +2344,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainContainer (16)
       objectReference: {fileID: 0}
+    - target: {fileID: 2178709576936790134, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2725215314768394955, guid: 7461fae2b6426514b8694f01eef840e8, type: 3}
       propertyPath: m_RayLength
       value: 60

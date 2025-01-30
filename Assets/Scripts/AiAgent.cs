@@ -276,7 +276,7 @@ public class AIAgent : Agent
 
     private void Start()
     {
-        Time.timeScale = 5f;
+        Time.timeScale = 1f;
         rb = GetComponent<Rigidbody>();
         readyToDoubleJump = true;
         isGrounded = true;
