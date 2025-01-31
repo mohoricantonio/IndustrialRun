@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 4
+    VectorObservationSize: 5
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -188,20 +188,17 @@ MonoBehaviour:
   FallMultiplier: 3
   GroundCheckDistance: 0.5
   DoubleJumpCooldown: 2.5
-  TrickDistance: 7.5
   MinYPos: -143.8166
   GroundLayer:
     serializedVersion: 2
     m_Bits: 64
-  TrickObsticleLayer:
-    serializedVersion: 2
-    m_Bits: 128
   readyToDoubleJump: 0
-  canDoATrick: 0
   TargetTransform: {fileID: 0}
   EndEpizodeCollider: {fileID: 0}
-  BoxesToJumpOver: {fileID: 0}
-  DuckUnder: {fileID: 0}
+  BoxesToJumpOver1: {fileID: 0}
+  BoxesToJumpOver2: {fileID: 0}
+  BoxesToJumpOver3: {fileID: 0}
+  DuckUnder1: {fileID: 0}
 --- !u!114 &3536782980971034993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 2
+  DecisionPeriod: 6
   DecisionStep: 0
   TakeActionsBetweenDecisions: 0
 --- !u!114 &4353466801433394945
@@ -232,12 +229,12 @@ MonoBehaviour:
   m_SensorName: RayFdLow
   m_DetectableTags:
   - Obstacle
-  - EndEpisode
   - Finish
+  - EndEpisode
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 0
   m_SphereCastRadius: 0.6
-  m_RayLength: 60
+  m_RayLength: 20
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -263,12 +260,12 @@ MonoBehaviour:
   m_SensorName: RayFdHigh
   m_DetectableTags:
   - Obstacle
-  - EndEpisode
   - Finish
+  - EndEpisode
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 0
   m_SphereCastRadius: 0.6
-  m_RayLength: 60
+  m_RayLength: 20
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295

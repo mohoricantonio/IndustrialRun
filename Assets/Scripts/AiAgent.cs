@@ -9,9 +9,8 @@ public class AIAgent : Agent
 {
 
     #region Properties
-    public float MovementSpeed = 8f, JumpForce = 10f, RotationSpeed = 800f, FallMultiplier = 3f, GroundCheckDistance = 0.5f, DoubleJumpCooldown = 2.5f, TrickDistance = 7.5f, MinYPos = -143.8166f;
+    public float MovementSpeed = 8f, JumpForce = 10f, RotationSpeed = 800f, FallMultiplier = 3f, GroundCheckDistance = 0.5f, DoubleJumpCooldown = 2.5f, MinYPos = -143.8166f;
     public LayerMask GroundLayer;
-    public LayerMask TrickObsticleLayer;
 
     private Animator animator;
     private Rigidbody rb;
@@ -19,7 +18,6 @@ public class AIAgent : Agent
     private Quaternion rotationDirection;
 
     public bool readyToDoubleJump;
-    public bool canDoATrick;
 
     private bool isGrounded;
     private float originalMovementSpeed;
@@ -30,18 +28,25 @@ public class AIAgent : Agent
     private Vector3 originalColiderSize;
     private Vector3 originalColiderCenter;
 
+    private bool canJump;
+    private bool canDoubleJump;
 
     //AI parameters
     public Transform TargetTransform;
     public Transform EndEpizodeCollider;
-    public Transform BoxesToJumpOver;
-    public Transform DuckUnder;
+
+    public Transform BoxesToJumpOver1;
+    public Transform BoxesToJumpOver2;
+    public Transform BoxesToJumpOver3;
+
+    public Transform DuckUnder1;
 
     private float boxesToJumpOverRotationY;
     private int actionToPerform;
 
     private bool isCrouching = false;
     private float distanceToGoal;
+    private int count = 0;
     #endregion
 
     #region Methods
@@ -49,7 +54,6 @@ public class AIAgent : Agent
     {
         int move = actions.DiscreteActions[0];
         int action = actions.DiscreteActions[1];
-
         switch (move)
         {
             //don't move
@@ -88,10 +92,11 @@ public class AIAgent : Agent
                 //Debug.Log("Get up");
                 GetUp();
                 break;
-                //trick
-                //case 4:
-                //    //Trick();
-                //    break;
+            //double jump
+            case 4:
+                //Debug.Log("Double Jump");
+                DoubleJump();
+                break;
         }
 
         // Add reward if closer to the goal
@@ -110,47 +115,90 @@ public class AIAgent : Agent
         sensor.AddObservation(transform.localPosition.x - TargetTransform.localPosition.x);
         sensor.AddObservation(distanceToGoal);
         sensor.AddObservation(isCrouching);
-        sensor.AddObservation(readyToDoubleJump);
+        sensor.AddObservation(CanJump());
+        sensor.AddObservation(CanDoubleJump());
     }
 
     public override void OnEpisodeBegin()
     {
         System.Random random = new System.Random();
         int randomValue = random.Next(0, 2);
+        var duckUnder2 = DuckUnder1.Find("DuckUnder2");
+        count++;
+        if (count % 9 == 0 && count % 10 != 0)
+        {
+            BoxesToJumpOver1.gameObject.SetActive(false);
+            BoxesToJumpOver2.gameObject.SetActive(false);
+            BoxesToJumpOver3.gameObject.SetActive(false);
+            DuckUnder1.gameObject.SetActive(false);
+            duckUnder2.gameObject.SetActive(false);
+        }
+        else if (count % 10 == 0)
+        {
+            BoxesToJumpOver1.gameObject.SetActive(true);
+            BoxesToJumpOver2.gameObject.SetActive(true);
+            BoxesToJumpOver3.gameObject.SetActive(true);
+            DuckUnder1.gameObject.SetActive(true);
+            duckUnder2.gameObject.SetActive(true);
+        }
+        else
+        {
+            BoxesToJumpOver1.gameObject.SetActive(random.Next(0, 2) == 0);
+            BoxesToJumpOver2.gameObject.SetActive(random.Next(0, 2) == 0);
+            BoxesToJumpOver3.gameObject.SetActive(random.Next(0, 2) == 0);
+            DuckUnder1.gameObject.SetActive(random.Next(0, 2) == 0);
+            duckUnder2.gameObject.SetActive(random.Next(0, 2) == 0);
+        }
+
 
         if (randomValue == 0)
         {
 
             transform.localPosition = new Vector3(-30, transform.localPosition.y, transform.localPosition.z);
 
-            TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            if (count % 15 == 0)
+            {
+                TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            }
+            else
+            {
+                TargetTransform.localPosition = new Vector3(random.Next(-100, -35), TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            }
+
 
             EndEpizodeCollider.localPosition = new Vector3(-20, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
 
-            BoxesToJumpOver.localPosition = new Vector3(-90, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
+            BoxesToJumpOver1.localPosition = new Vector3(-90, BoxesToJumpOver1.localPosition.y, BoxesToJumpOver1.localPosition.z);
 
-            BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY + 180, 0);
+            BoxesToJumpOver1.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY + 180, 0);
 
-            DuckUnder.localPosition = new Vector3(-5, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
+            DuckUnder1.localPosition = new Vector3(-5, DuckUnder1.localPosition.y, DuckUnder1.localPosition.z);
 
         }
         else
         {
             transform.localPosition = new Vector3(-85, transform.localPosition.y, transform.localPosition.z);
 
-            TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
-
+            if (count % 15 == 0)
+            {
+                TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            }
+            else
+            {
+                TargetTransform.localPosition = new Vector3(random.Next(-80, -20), TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            }
             EndEpizodeCollider.localPosition = new Vector3(-100, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
 
-            BoxesToJumpOver.localPosition = new Vector3(-10, BoxesToJumpOver.localPosition.y, BoxesToJumpOver.localPosition.z);
+            BoxesToJumpOver1.localPosition = new Vector3(-10, BoxesToJumpOver1.localPosition.y, BoxesToJumpOver1.localPosition.z);
 
-            BoxesToJumpOver.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY, 0);
+            BoxesToJumpOver1.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY, 0);
 
-            DuckUnder.localPosition = new Vector3(-20, DuckUnder.localPosition.y, DuckUnder.localPosition.z);
+            DuckUnder1.localPosition = new Vector3(-20, DuckUnder1.localPosition.y, DuckUnder1.localPosition.z);
         }
 
         GetUp();
         isCrouching = false;
+        canJump = true;
 
         distanceToGoal = Mathf.Abs(TargetTransform.localPosition.x - transform.localPosition.x);
         SetAnimParameters();
@@ -224,15 +272,27 @@ public class AIAgent : Agent
     private void Jump()
     {
         actionToPerform = 0;
-        animator.ResetTrigger("Jump");
-        if (isGrounded && animator.GetBool("doingTrick") == false)
+        if (CanJump())
         {
             animator.SetBool("IsJumping", true);
             animator.SetBool("FinishedJump", false);
             animator.SetTrigger("Jump");
         }
-        if (!isGrounded && readyToDoubleJump && animator.GetBool("doingTrick") == false)
+    }
+
+    private bool CanJump()
+    {
+        return isGrounded && !isCrouching && animator.GetBool("FinishedJump") == true;
+    }
+
+    private void DoubleJump()
+    {
+        actionToPerform = 0;
+        if (CanDoubleJump())
         {
+            animator.SetBool("IsJumping", true);
+            animator.SetBool("FinishedJump", false);
+            animator.SetTrigger("Jump");
             readyToDoubleJump = false;
             animator.SetTrigger("Double jump");
             animator.SetBool("FinishedJump", false);
@@ -240,6 +300,12 @@ public class AIAgent : Agent
             Invoke(nameof(ResetDoubleJumpCooldown), DoubleJumpCooldown);
         }
     }
+
+    private bool CanDoubleJump()
+    {
+        return readyToDoubleJump && !isCrouching && animator.GetBool("FinishedJump") == true;
+    }
+
     private void Crouch()
     {
         actionToPerform = 0;
@@ -264,15 +330,6 @@ public class AIAgent : Agent
             isCrouching = false;
         }
     }
-    private void Trick()
-    {
-        if (canDoATrick)
-        {
-            animator.SetBool("doingTrick", true);
-            var rnd = new System.Random(DateTime.Now.Millisecond);
-            animator.SetInteger("Trick", rnd.Next(0, 4));
-        }
-    }
 
     private void Start()
     {
@@ -286,19 +343,22 @@ public class AIAgent : Agent
         originalZValue = transform.localPosition.z;
         boxColider = GetComponent<BoxCollider>();
         isCrouching = false;
+        canJump = true;
 
-        boxesToJumpOverRotationY = BoxesToJumpOver.rotation.y;
+        boxesToJumpOverRotationY = BoxesToJumpOver1.rotation.y;
 
         originalColiderSize = boxColider.size;
         originalColiderCenter = boxColider.center;
         SetAnimParameters();
     }
-    private void Update()
+    private void FixedUpdate()
     {
         CheckGroundStatus();
-        canDoATrick = CanDoATrick();
         MoveRigidBody();
 
+    }
+    private void Update()
+    {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             actionToPerform = 1;
@@ -310,10 +370,11 @@ public class AIAgent : Agent
             else
                 actionToPerform = 3;
         }
-        //if (Input.GetKeyDown(KeyCode.E))
-        //{
-        //    actionToPerform = 4;
-        //}
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            actionToPerform = 4;
+        }
+        canJump = CanJump();
     }
 
     private void CheckGroundStatus()
@@ -330,33 +391,12 @@ public class AIAgent : Agent
             return true;
         return false;
     }
-    private bool CanDoATrick()
-    {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Fast Run"))
-        {
-            if (Physics.Raycast(transform.position, Vector3.right, TrickDistance, TrickObsticleLayer))
-            {
-                return true;
-            }
-            if (Physics.Raycast(transform.position, Vector3.left, TrickDistance, TrickObsticleLayer))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
     private void MoveRigidBody()
     {
-        if (animator.GetBool("isMoving") && movementDirection.x != 0f && animator.GetBool("doingTrick") == false)
+        if (animator.GetBool("isMoving") && movementDirection.x != 0f)
         {
             rotationDirection = Quaternion.LookRotation(movementDirection, Vector3.up);
             transform.position = transform.position + movementDirection * Time.deltaTime * MovementSpeed;
-        }
-        if (animator.GetBool("doingTrick"))
-        {
-            transform.position = transform.position + movementDirection * Time.deltaTime * MovementSpeed;
-
         }
         transform.rotation = Quaternion.RotateTowards(transform.rotation, rotationDirection, RotationSpeed * Time.deltaTime);
         float ypos = transform.localPosition.y;
@@ -378,23 +418,17 @@ public class AIAgent : Agent
         animator.ResetTrigger("Double jump");
         animator.ResetTrigger("Jump");
         animator.SetBool("IsJumping", false);
-        animator.SetBool("FinishedJump", false);
+        animator.SetBool("FinishedJump", true);
         animator.SetBool("isCrouching", false);
-        animator.SetBool("doingTrick", false);
-        animator.SetInteger("Trick", 0);
     }
     private void ResetDoubleJumpCooldown()
-    { 
+    {
         readyToDoubleJump = true;
     }
 
     public void FinishedJump()
     {
         animator.SetBool("FinishedJump", true);
-    }
-    public void FinishedTrick()
-    {
-        animator.SetBool("doingTrick", false);
     }
 
     public void JumpRigidBody()
