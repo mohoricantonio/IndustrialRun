@@ -3599,18 +3599,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 119374209393157083, guid: 9f68910c00dc5f448aaf1f30c94211b5, type: 3}
-      propertyPath: Offset.y
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 119374209393157083, guid: 9f68910c00dc5f448aaf1f30c94211b5, type: 3}
-      propertyPath: Offset.z
-      value: -12
-      objectReference: {fileID: 0}
-    - target: {fileID: 119374209393157083, guid: 9f68910c00dc5f448aaf1f30c94211b5, type: 3}
-      propertyPath: Smoothing
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 119374209393157083, guid: 9f68910c00dc5f448aaf1f30c94211b5, type: 3}
       propertyPath: PlayerObject
       value: 
       objectReference: {fileID: 1572690025}
