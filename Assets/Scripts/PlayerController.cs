@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Movment : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     #region Properties
     public float MovementSpeed = 7f, JumpForce = 7f, RotationSpeed = 700f, FallMultiplier = 3f, GroundCheckDistance = 0.5f, DoubleJumpCooldown = 5f, TrickDistance = 5f, MinYPos = 1.93f, StepInterval = 0.5f;

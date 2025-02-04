@@ -6,11 +6,11 @@ public class UI : MonoBehaviour
     public GameObject DoubleJump;
     public GameObject Trick;
 
-    private Movment playerMovementScript;
+    private PlayerController playerMovementScript;
     private PauseMenu pauseMenuScript;
     private void Start()
     {
-        playerMovementScript = PlayerObject.GetComponent<Movment>();
+        playerMovementScript = PlayerObject.GetComponent<PlayerController>();
         pauseMenuScript = GetComponentInParent<PauseMenu>();
     }
 

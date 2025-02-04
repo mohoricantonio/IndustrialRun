@@ -157,7 +157,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: e15535ae010023144b5910828a8c905a, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: AiAgents
@@ -194,8 +194,7 @@ MonoBehaviour:
     m_Bits: 64
   readyToDoubleJump: 0
   TargetTransform: {fileID: 0}
-  EndEpizodeCollider: {fileID: 0}
-  Stairs: {fileID: 0}
+  FinalTargetTransform: {fileID: 0}
 --- !u!114 &3536782980971034993
 MonoBehaviour:
   m_ObjectHideFlags: 0
