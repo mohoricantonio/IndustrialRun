@@ -78,4 +78,17 @@ public class PauseMenu : MonoBehaviour
         ResumeButton.SetActive(false);
         EventSystem.current.SetSelectedGameObject(null);
     }
+    public void PlayerCaught()
+    {
+        PauseMenuPanel.SetActive(true);
+        Time.timeScale = 0f;
+        isPaused = true;
+        statsText.text = "\nAgent has caught you!\n";
+        statsText.text += "\nTime: " + scoreManager.ReturnTime().ToString() + "s\nTricks performed: " + scoreManager.ReturnTricksPerformed().ToString()
+            + "\n\nScore: " + scoreManager.ReturnScore().ToString();
+
+        Title.GetComponent<TextMeshProUGUI>().text = "Level failed!";
+        ResumeButton.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(null);
+    }
 }

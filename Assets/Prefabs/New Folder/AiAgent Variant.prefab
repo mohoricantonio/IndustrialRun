@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &5730776288917076546
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1475282711440636742, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133723299904154407, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_Name
+      value: AiAgent Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 6355749908552012135, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: e347e6dc88457f4428dc716c1ea2a5b9, type: 3}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 206.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.235
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797212199462023581, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1475282711440636742, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6133723299904154407, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+      insertIndex: 5
+      addedObject: {fileID: 1448681003660698394}
+  m_SourcePrefab: {fileID: 100100000, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+--- !u!1 &1916442703079461221 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6133723299904154407, guid: a6806a109714d7b4fa60eaff87930f05, type: 3}
+  m_PrefabInstance: {fileID: 5730776288917076546}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1448681003660698394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1916442703079461221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3b5a1e42cd6394488d406c29cc106c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+  MovementSpeed: 8
+  JumpForce: 10
+  RotationSpeed: 800
+  FallMultiplier: 3
+  GroundCheckDistance: 0.5
+  DoubleJumpCooldown: 2.5
+  MinYPos: 1.933181
+  GroundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  readyToDoubleJump: 0
+  TargetTransform: {fileID: 0}

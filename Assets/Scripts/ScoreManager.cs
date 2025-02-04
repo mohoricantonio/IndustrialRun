@@ -62,7 +62,10 @@ public class ScoreManager : MonoBehaviour
         if (!levelEnded) UpdateScore();
         return score;
     }
-
+    public void PlayerCaught()
+    {
+        pauseMenu.PlayerCaught();
+    }
     private void UpdateScore()
     {
         score = InitialScore - Mathf.CeilToInt(timeTaken) + numOfPerformedTricks * TrickPoints;

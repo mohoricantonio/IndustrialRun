@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Obstacle
   - EndEpisode
+  - Ground
+  - ActivateAgent
+  - Agent
   layers:
   - Default
   - TransparentFX
@@ -18,9 +21,9 @@ TagManager:
   - LevelStart
   - LevelEnd
   - EndBox
-  - 
-  - 
-  - 
+  - Player
+  - Agent
+  - AgentFinish
   - 
   - 
   - 

@@ -59,4 +59,12 @@ public class AmbientMusic : MonoBehaviour
             }
         }
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Agent"))
+        {
+            audioSource.volume = 0.15f;
+            scoreManager.PlayerCaught();
+        }
+    }
 }

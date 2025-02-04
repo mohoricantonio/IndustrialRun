@@ -13,6 +13,8 @@ public class Movment : MonoBehaviour
     public AudioClip JumpSound;
     public AudioClip TrickSound;
 
+    public GameObject Agent;
+
     private Animator animator;
     private Rigidbody rb;
     private Vector3 movementDirection;
@@ -23,7 +25,7 @@ public class Movment : MonoBehaviour
 
     private bool isGrounded;
     private float originalMovementSpeed;
-    
+
     private float originalZValue;
 
     private BoxCollider boxColider;
@@ -36,6 +38,7 @@ public class Movment : MonoBehaviour
     private float originalStepInterval;
 
     private ScoreManager scoreManager;
+
     #endregion
 
     #region CallbackContext methods
@@ -172,7 +175,7 @@ public class Movment : MonoBehaviour
         {
             rotationDirection = Quaternion.LookRotation(movementDirection, Vector3.up);
             transform.position = transform.position + movementDirection * Time.deltaTime * MovementSpeed;
-            if(isGrounded) 
+            if (isGrounded)
                 PlayFootstepSound();
         }
         if (animator.GetBool("doingTrick"))
@@ -235,9 +238,9 @@ public class Movment : MonoBehaviour
 
     private void PlayFootstepSound()
     {
-        if (FootstepSounds.Length == 0) 
+        if (FootstepSounds.Length == 0)
             return;
-        if (!readyToPlaySound) 
+        if (!readyToPlaySound)
             return;
         audioSource.PlayOneShot(FootstepSounds[stepSoundNum]);
         stepSoundNum++;
@@ -250,5 +253,24 @@ public class Movment : MonoBehaviour
     {
         readyToPlaySound = true;
     }
+    private void ActivateAgent()
+    {
+        Agent.SetActive(true);
+    }
+    #endregion
+
+    #region Collision methods
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (collider.gameObject.CompareTag("ActivateAgent"))
+        {
+            Invoke(nameof(ActivateAgent), 2.5f);
+        }
+        if (collider.gameObject.CompareTag("Agent"))
+        {
+            Debug.Log("Agent caught you!");
+        }
+    }
+
     #endregion
 }

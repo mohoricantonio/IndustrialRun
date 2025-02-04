@@ -152,8 +152,8 @@ MonoBehaviour:
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
-      BranchSizes: 0300000004000000
-    VectorActionSize: 0300000004000000
+      BranchSizes: 0300000005000000
+    VectorActionSize: 0300000005000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
@@ -195,10 +195,7 @@ MonoBehaviour:
   readyToDoubleJump: 0
   TargetTransform: {fileID: 0}
   EndEpizodeCollider: {fileID: 0}
-  BoxesToJumpOver1: {fileID: 0}
-  BoxesToJumpOver2: {fileID: 0}
-  BoxesToJumpOver3: {fileID: 0}
-  DuckUnder1: {fileID: 0}
+  Stairs: {fileID: 0}
 --- !u!114 &3536782980971034993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,6 +228,7 @@ MonoBehaviour:
   - Obstacle
   - Finish
   - EndEpisode
+  - Ground
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 0
   m_SphereCastRadius: 0.6
@@ -262,6 +260,7 @@ MonoBehaviour:
   - Obstacle
   - Finish
   - EndEpisode
+  - Ground
   m_RaysPerDirection: 1
   m_MaxRayDegrees: 0
   m_SphereCastRadius: 0.6
