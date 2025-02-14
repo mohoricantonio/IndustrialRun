@@ -21,7 +21,6 @@ public class AIAgentTraining : Agent
 
     private bool isGrounded;
     private float originalMovementSpeed;
-    private bool isDoubleJumping;
 
     private float originalZValue;
 
@@ -34,12 +33,20 @@ public class AIAgentTraining : Agent
 
     //AI parameters
     public Transform TargetTransform;
-    public Transform FinalTargetTransform;
+    public Transform EndEpizodeCollider;
+
+    public Transform BoxesToJumpOver1;
+    public Transform BoxesToJumpOver2;
+    public Transform BoxesToJumpOver3;
+
+    public Transform DuckUnder1;
+
+    private float boxesToJumpOverRotationY;
     private int actionToPerform;
 
     private bool isCrouching = false;
     private float distanceToGoal;
-    private float originalDistanceToGoal;
+    private int count = 0;
     #endregion
 
     #region Methods
@@ -67,47 +74,31 @@ public class AIAgentTraining : Agent
 
         switch (action)
         {
+            //don't do anything
             case 0:
-                Debug.Log("Do nothing");
-                //Add reward so agent doesn't jump or crouch for no reason
-                AddReward(0.001f);
                 break;
-
+            //jump
             case 1:
-                Debug.Log("Jump");
-                AddReward(-0.001f);
+                //Debug.Log("Jump");
                 Jump();
                 break;
-
+            //crouch
             case 2:
-                Debug.Log("Crouch");
-                AddReward(-0.001f);
+                //Debug.Log("Crouch");
                 Crouch();
                 break;
-
+            //get up
             case 3:
-                Debug.Log("Get up");
-                AddReward(-0.001f);
+                //Debug.Log("Get up");
                 GetUp();
                 break;
-
+            //double jump
             case 4:
-                Debug.Log("Double Jump");
-                AddReward(-0.001f);
+                //Debug.Log("Double Jump");
                 DoubleJump();
                 break;
         }
 
-        if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < 15f)
-        {
-            float newXValue = transform.localPosition.x + (originalDistanceToGoal / 2f);
-            if (newXValue > FinalTargetTransform.localPosition.x)
-            {
-                newXValue = FinalTargetTransform.localPosition.x - 1f;
-            }
-            TargetTransform.localPosition = new Vector3(newXValue, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
-            distanceToGoal = originalDistanceToGoal / 2f;
-        }
         // Add reward if closer to the goal
         if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < distanceToGoal)
         {
@@ -115,7 +106,12 @@ public class AIAgentTraining : Agent
             distanceToGoal = MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x);
         }
 
+        if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < distanceToGoal)
+        {
+            distanceToGoal = MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x);
+        }
         // Penalty given each step to encourage agent to finish task quickly.
+
         AddReward(-1f / MaxStep);
     }
 
@@ -130,15 +126,86 @@ public class AIAgentTraining : Agent
 
     public override void OnEpisodeBegin()
     {
-        transform.localPosition = new Vector3(55f, transform.localPosition.y, transform.localPosition.z);
-        TargetTransform.localPosition = new Vector3(120f, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+        System.Random random = new System.Random();
+        int randomValue = random.Next(0, 2);
+        var duckUnder2 = DuckUnder1.Find("DuckUnder2");
+        count++;
+        if (count % 9 == 0 && count % 10 != 0)
+        {
+            BoxesToJumpOver1.gameObject.SetActive(false);
+            BoxesToJumpOver2.gameObject.SetActive(false);
+            BoxesToJumpOver3.gameObject.SetActive(false);
+            DuckUnder1.gameObject.SetActive(false);
+            duckUnder2.gameObject.SetActive(false);
+        }
+        else if (count % 10 == 0)
+        {
+            BoxesToJumpOver1.gameObject.SetActive(true);
+            BoxesToJumpOver2.gameObject.SetActive(true);
+            BoxesToJumpOver3.gameObject.SetActive(true);
+            DuckUnder1.gameObject.SetActive(true);
+            duckUnder2.gameObject.SetActive(true);
+        }
+        else
+        {
+            BoxesToJumpOver1.gameObject.SetActive(random.Next(0, 2) == 0);
+            BoxesToJumpOver2.gameObject.SetActive(random.Next(0, 2) == 0);
+            BoxesToJumpOver3.gameObject.SetActive(random.Next(0, 2) == 0);
+            DuckUnder1.gameObject.SetActive(random.Next(0, 2) == 0);
+            duckUnder2.gameObject.SetActive(random.Next(0, 2) == 0);
+        }
+
+
+        if (randomValue == 0)
+        {
+
+            transform.localPosition = new Vector3(-30, transform.localPosition.y, transform.localPosition.z);
+
+            if (count % 15 == 0)
+            {
+                TargetTransform.localPosition = new Vector3(-100, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            }
+            else
+            {
+                TargetTransform.localPosition = new Vector3(random.Next(-100, -35), TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            }
+
+
+            EndEpizodeCollider.localPosition = new Vector3(-20, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
+
+            BoxesToJumpOver1.localPosition = new Vector3(-90, BoxesToJumpOver1.localPosition.y, BoxesToJumpOver1.localPosition.z);
+
+            BoxesToJumpOver1.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY + 180, 0);
+
+            DuckUnder1.localPosition = new Vector3(-5, DuckUnder1.localPosition.y, DuckUnder1.localPosition.z);
+
+        }
+        else
+        {
+            transform.localPosition = new Vector3(-85, transform.localPosition.y, transform.localPosition.z);
+
+            if (count % 15 == 0)
+            {
+                TargetTransform.localPosition = new Vector3(-20, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            }
+            else
+            {
+                TargetTransform.localPosition = new Vector3(random.Next(-80, -20), TargetTransform.localPosition.y, TargetTransform.localPosition.z);
+            }
+            EndEpizodeCollider.localPosition = new Vector3(-100, EndEpizodeCollider.localPosition.y, EndEpizodeCollider.localPosition.z);
+
+            BoxesToJumpOver1.localPosition = new Vector3(-10, BoxesToJumpOver1.localPosition.y, BoxesToJumpOver1.localPosition.z);
+
+            BoxesToJumpOver1.rotation = Quaternion.Euler(0, boxesToJumpOverRotationY, 0);
+
+            DuckUnder1.localPosition = new Vector3(-20, DuckUnder1.localPosition.y, DuckUnder1.localPosition.z);
+        }
+
         GetUp();
         isCrouching = false;
         canJump = true;
-        isDoubleJumping = false;
 
         distanceToGoal = Mathf.Abs(TargetTransform.localPosition.x - transform.localPosition.x);
-        originalDistanceToGoal = distanceToGoal;
         SetAnimParameters();
     }
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -164,13 +231,11 @@ public class AIAgentTraining : Agent
         if (other.gameObject.tag == "Finish")
         {
             AddReward(5f);
-            //Debug.Log(GetCumulativeReward());
             EndEpisode();
         }
         if (other.gameObject.tag == "EndEpisode")
         {
             AddReward(-10f);
-            //Debug.Log(GetCumulativeReward());
             EndEpisode();
         }
     }
@@ -185,7 +250,6 @@ public class AIAgentTraining : Agent
                 // Collision from left or right
                 if (Mathf.Abs(contactNormal.y) < Mathf.Abs(contactNormal.x))
                 {
-                    //Debug.Log("Collision enter");
                     AddReward(-5f / MaxStep);
                     break;
                 }
@@ -202,8 +266,7 @@ public class AIAgentTraining : Agent
                 // Collision from left or right
                 if (Mathf.Abs(contactNormal.y) < Mathf.Abs(contactNormal.x))
                 {
-                    //Debug.Log("Collision stay");
-                    AddReward(-1f / MaxStep);
+                    AddReward(-0.5f / MaxStep);
                     break;
                 }
             }
@@ -224,14 +287,7 @@ public class AIAgentTraining : Agent
 
     private bool CanJump()
     {
-        if (isGrounded && !isCrouching)
-        {
-            if ((animator.GetBool("IsJumping") == false) && (animator.GetBool("FinishedJump") == true))
-            {
-                return true;
-            }
-        }
-        return false;
+        return isGrounded && !isCrouching && animator.GetBool("FinishedJump") == true;
     }
 
     private void DoubleJump()
@@ -239,12 +295,12 @@ public class AIAgentTraining : Agent
         actionToPerform = 0;
         if (CanDoubleJump())
         {
-            isDoubleJumping = true;
             animator.SetBool("IsJumping", true);
             animator.SetBool("FinishedJump", false);
             animator.SetTrigger("Jump");
             readyToDoubleJump = false;
             animator.SetTrigger("Double jump");
+            animator.SetBool("FinishedJump", false);
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             Invoke(nameof(ResetDoubleJumpCooldown), DoubleJumpCooldown);
         }
@@ -252,14 +308,7 @@ public class AIAgentTraining : Agent
 
     private bool CanDoubleJump()
     {
-        if (isGrounded && readyToDoubleJump && !isCrouching)
-        {
-            if ((animator.GetBool("IsJumping") == false) && (animator.GetBool("FinishedJump") == true))
-            {
-                return true;
-            }
-        }
-        return false;
+        return readyToDoubleJump && !isCrouching && animator.GetBool("FinishedJump") == true;
     }
 
     private void Crouch()
@@ -289,7 +338,6 @@ public class AIAgentTraining : Agent
 
     private void Start()
     {
-        Time.timeScale = 1f;
         rb = GetComponent<Rigidbody>();
         readyToDoubleJump = true;
         isGrounded = true;
@@ -300,7 +348,8 @@ public class AIAgentTraining : Agent
         boxColider = GetComponent<BoxCollider>();
         isCrouching = false;
         canJump = true;
-        isDoubleJumping = false;
+
+        boxesToJumpOverRotationY = BoxesToJumpOver1.rotation.y;
 
         originalColiderSize = boxColider.size;
         originalColiderCenter = boxColider.center;
@@ -335,7 +384,7 @@ public class AIAgentTraining : Agent
     private void CheckGroundStatus()
     {
         isGrounded = Physics.Raycast(transform.position, Vector3.down, GroundCheckDistance, GroundLayer);
-        if (isGrounded && (animator.GetBool("FinishedJump") == true))
+        if (isGrounded && animator.GetBool("FinishedJump"))
         {
             animator.SetBool("IsJumping", false);
         }
@@ -383,15 +432,7 @@ public class AIAgentTraining : Agent
 
     public void FinishedJump()
     {
-        if (isDoubleJumping)
-        {
-            isDoubleJumping = false;
-        }
-        else
-        {
-            animator.SetBool("FinishedJump", true);
-        }
-
+        animator.SetBool("FinishedJump", true);
     }
 
     public void JumpRigidBody()
