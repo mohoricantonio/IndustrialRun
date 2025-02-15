@@ -5,7 +5,7 @@ using Unity.MLAgents.Sensors;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class AiAgentPlay : Agent
+public class AIAgentPlay : Agent
 {
 
     #region Properties
@@ -21,7 +21,6 @@ public class AiAgentPlay : Agent
 
     private bool isGrounded;
     private float originalMovementSpeed;
-    private bool isDoubleJumping;
 
     private float originalZValue;
 
@@ -29,15 +28,17 @@ public class AiAgentPlay : Agent
     private Vector3 originalColiderSize;
     private Vector3 originalColiderCenter;
 
+    private bool canJump;
     private bool canDoubleJump;
 
     //AI parameters
     public Transform TargetTransform;
     public Transform FinalTargetTransform;
 
+    private int actionToPerform;
+
     private bool isCrouching = false;
     private float distanceToGoal;
-    private float originalDistanceToGoal;
     private bool reachedFinalTarget;
     #endregion
 
@@ -70,33 +71,29 @@ public class AiAgentPlay : Agent
             {
                 case 0:
                     break;
-
                 case 1:
                     Jump();
                     break;
-
                 case 2:
                     Crouch();
                     break;
-
                 case 3:
                     GetUp();
                     break;
-
                 case 4:
                     DoubleJump();
                     break;
             }
 
-            if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < 15f)
+            if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < 5f)
             {
-                float newXValue = transform.localPosition.x + (originalDistanceToGoal / 2f);
+                float newXValue = transform.localPosition.x + 5f;
                 if (newXValue > FinalTargetTransform.localPosition.x)
                 {
                     newXValue = FinalTargetTransform.localPosition.x - 1f;
                 }
                 TargetTransform.localPosition = new Vector3(newXValue, TargetTransform.localPosition.y, TargetTransform.localPosition.z);
-                distanceToGoal = originalDistanceToGoal / 2f;
+                distanceToGoal = MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x);
             }
             if (MathF.Abs(transform.localPosition.x - TargetTransform.localPosition.x) < distanceToGoal)
             {
@@ -117,15 +114,36 @@ public class AiAgentPlay : Agent
         sensor.AddObservation(CanJump());
         sensor.AddObservation(CanDoubleJump());
     }
-    private void OnCollisionEnter(Collision other)
+
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+        var actions = actionsOut.DiscreteActions;
+        var move = Input.GetAxisRaw("Horizontal");
+        switch (move)
+        {
+            case 0:
+                actions[0] = 0;
+                break;
+            case 1:
+                actions[0] = 1;
+                break;
+            case -1:
+                actions[0] = 2;
+                break;
+        }
+        actions[1] = actionToPerform;
+    }
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Finish")
         {
             reachedFinalTarget = true;
         }
     }
+
     private void Jump()
     {
+        actionToPerform = 0;
         if (CanJump())
         {
             animator.SetBool("IsJumping", true);
@@ -136,26 +154,20 @@ public class AiAgentPlay : Agent
 
     private bool CanJump()
     {
-        if (isGrounded && !isCrouching)
-        {
-            if ((animator.GetBool("IsJumping") == false) && (animator.GetBool("FinishedJump") == true))
-            {
-                return true;
-            }
-        }
-        return false;
+        return isGrounded && !isCrouching && animator.GetBool("FinishedJump") == true;
     }
 
     private void DoubleJump()
     {
+        actionToPerform = 0;
         if (CanDoubleJump())
         {
-            isDoubleJumping = true;
             animator.SetBool("IsJumping", true);
             animator.SetBool("FinishedJump", false);
             animator.SetTrigger("Jump");
             readyToDoubleJump = false;
             animator.SetTrigger("Double jump");
+            animator.SetBool("FinishedJump", false);
             rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             Invoke(nameof(ResetDoubleJumpCooldown), DoubleJumpCooldown);
         }
@@ -163,18 +175,12 @@ public class AiAgentPlay : Agent
 
     private bool CanDoubleJump()
     {
-        if (isGrounded && readyToDoubleJump && !isCrouching)
-        {
-            if ((animator.GetBool("IsJumping") == false) && (animator.GetBool("FinishedJump") == true))
-            {
-                return true;
-            }
-        }
-        return false;
+        return readyToDoubleJump && !isCrouching && animator.GetBool("FinishedJump") == true;
     }
 
     private void Crouch()
     {
+        actionToPerform = 0;
         if (CanCrouch() && !isCrouching)
         {
             animator.SetBool("isCrouching", true);
@@ -186,6 +192,7 @@ public class AiAgentPlay : Agent
     }
     private void GetUp()
     {
+        actionToPerform = 0;
         if (isCrouching)
         {
             animator.SetBool("isCrouching", false);
@@ -207,16 +214,12 @@ public class AiAgentPlay : Agent
         originalZValue = transform.localPosition.z;
         boxColider = GetComponent<BoxCollider>();
         isCrouching = false;
-        isDoubleJumping = false;
+        canJump = true;
 
         originalColiderSize = boxColider.size;
         originalColiderCenter = boxColider.center;
-        SetAnimParameters();
-
         distanceToGoal = Mathf.Abs(TargetTransform.localPosition.x - transform.localPosition.x);
-        originalDistanceToGoal = distanceToGoal;
-
-        reachedFinalTarget = false;
+        SetAnimParameters();
     }
     private void FixedUpdate()
     {
@@ -224,11 +227,30 @@ public class AiAgentPlay : Agent
         MoveRigidBody();
 
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            actionToPerform = 1;
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if (!isCrouching)
+                actionToPerform = 2;
+            else
+                actionToPerform = 3;
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            actionToPerform = 4;
+        }
+        canJump = CanJump();
+    }
 
     private void CheckGroundStatus()
     {
         isGrounded = Physics.Raycast(transform.position, Vector3.down, GroundCheckDistance, GroundLayer);
-        if (isGrounded && (animator.GetBool("FinishedJump") == true))
+        if (isGrounded && animator.GetBool("FinishedJump"))
         {
             animator.SetBool("IsJumping", false);
         }
@@ -276,14 +298,7 @@ public class AiAgentPlay : Agent
 
     public void FinishedJump()
     {
-        if (isDoubleJumping)
-        {
-            isDoubleJumping = false;
-        }
-        else
-        {
-            animator.SetBool("FinishedJump", true);
-        }
+        animator.SetBool("FinishedJump", true);
     }
 
     public void JumpRigidBody()
